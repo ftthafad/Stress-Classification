@@ -603,6 +603,22 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: var(--shadow-glow-purple);
 }
 
+/* 3-button toggle (blood_pressure) */
+.toggle-3 .toggle-btn[data-value="1"].active {
+  background: linear-gradient(135deg, #10b981, #059669);
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.3);
+}
+
+.toggle-3 .toggle-btn[data-value="2"].active {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.3);
+}
+
+.toggle-3 .toggle-btn[data-value="3"].active {
+  background: linear-gradient(135deg, #f43f5e, #e11d48);
+  box-shadow: 0 0 24px rgba(244, 63, 94, 0.3);
+}
+
 /* Submit button area */
 .submit-area {
   text-align: center;

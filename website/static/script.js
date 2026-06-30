@@ -295,13 +295,20 @@
       });
 
       // Reset toggles
+      const toggleDefaults = { mental_health_history: '0', blood_pressure: '2' };
       document.getElementById('mental_health_history').value = '0';
+      document.getElementById('blood_pressure').value = '2';
+
       const toggleBtns = document.querySelectorAll('.toggle-btn');
       toggleBtns.forEach(btn => {
-        if (btn.dataset.value === '0') {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
+        const field = btn.dataset.field;
+        const defaultVal = toggleDefaults[field];
+        if (defaultVal !== undefined) {
+          if (btn.dataset.value === defaultVal) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
         }
       });
 

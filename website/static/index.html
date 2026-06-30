@@ -192,14 +192,20 @@
             </div>
 
             <div class="question-item">
-              <label class="question-label" for="blood_pressure">Bagaimana kondisi tekanan darahmu?</label>
-              <p class="question-hint">0 = normal, 10 = sangat tinggi</p>
-              <div class="slider-container">
-                <span class="slider-min-label">0</span>
-                <input type="range" id="blood_pressure" name="blood_pressure" min="0" max="10" value="5">
-                <span class="slider-max-label">10</span>
-                <div class="slider-value" id="val-blood_pressure">5</div>
+              <label class="question-label">Bagaimana kondisi tekanan darahmu?</label>
+              <p class="question-hint">Pilih salah satu</p>
+              <div class="toggle-container toggle-3">
+                <button type="button" class="toggle-btn" data-field="blood_pressure" data-value="1">
+                  🟢 Rendah
+                </button>
+                <button type="button" class="toggle-btn active" data-field="blood_pressure" data-value="2">
+                  🔵 Normal
+                </button>
+                <button type="button" class="toggle-btn" data-field="blood_pressure" data-value="3">
+                  🔴 Tinggi
+                </button>
               </div>
+              <input type="hidden" id="blood_pressure" name="blood_pressure" value="2">
             </div>
 
             <div class="question-item">

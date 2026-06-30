@@ -117,7 +117,7 @@ def predict():
             nilai = int(input_data[key])
             data_skala_10[key] = nilai
 
-            if key == 'mental_health_history':
+            if key in ('mental_health_history', 'blood_pressure'):
                 data[key] = nilai
             else:
                 data[key] = skala_ke_asli(nilai, min_asli, max_asli)

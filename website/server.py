@@ -4,6 +4,7 @@
 # analisis SHAP, dan Rule Based Reasoning.
 
 import os
+import sys
 import pandas as pd
 import pickle
 import shap
@@ -13,6 +14,10 @@ import traceback
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
+# Tambahkan parent directory ke sys.path agar bisa import reasoning.py
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, ROOT_DIR)
+
 from flask import Flask, request, jsonify, send_from_directory
 from reasoning import beri_saran, NAMA_INDO
 
@@ -21,8 +26,8 @@ app = Flask(__name__, static_folder='static')
 # ======================================================
 # LOAD MODEL & DATA SAAT SERVER START
 # ======================================================
-MODEL_PATH = 'model_ensemble.pkl'
-DATA_PATH = 'processed-dataset.csv'
+MODEL_PATH = os.path.join(ROOT_DIR, 'model_ensemble.pkl')
+DATA_PATH = os.path.join(ROOT_DIR, 'processed-dataset.csv')
 
 model = None
 X_train = None

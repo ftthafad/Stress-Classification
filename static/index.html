@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Prediksi Tingkat Stres dan Analisis Penyebab Stres menggunakan Ensemble Learning (Decision Tree + Random Forest + AdaBoost), SHAP Analysis, dan Rule Based Reasoning.">
+  <title>Prediksi Tingkat Stres — Ensemble Learning & Rule Based Reasoning</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+
+  <!-- ═══ NAVBAR ═══ -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="#hero" class="navbar-logo">
+        <span class="logo-icon">🧠</span>
+        StressPredict
+      </a>
+      <ul class="navbar-links">
+        <li><a href="#metodologi">Metodologi</a></li>
+        <li><a href="#kuesioner">Kuesioner</a></li>
+        <li><a href="#hasil">Hasil</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        Machine Learning + Rule Based Reasoning
+      </div>
+      <h1>
+        Prediksi <span class="gradient-text">Tingkat Stres</span> dan Analisis Penyebab Stres
+      </h1>
+      <p class="hero-subtitle">
+        Menggunakan <strong>Ensemble Learning</strong> (Decision Tree + Random Forest + AdaBoost), 
+        analisis <strong>SHAP</strong> untuk penyebab dominan, dan 
+        <strong>Rule Based Reasoning</strong> untuk saran personal.
+      </p>
+      <div class="hero-actions">
+        <a href="#kuesioner" class="btn btn-primary" id="btn-mulai">
+          🚀 Mulai Analisis
+        </a>
+        <a href="#metodologi" class="btn btn-secondary">
+          📖 Pelajari Metodologi
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ METODOLOGI ═══ -->
+  <section class="section" id="metodologi">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Metodologi</span>
+        <h2 class="section-title">Tiga Pilar Analisis</h2>
+        <p class="section-desc">
+          Sistem ini menggabungkan tiga metode untuk memberikan prediksi yang akurat, 
+          analisis penyebab yang transparan, dan saran yang actionable.
+        </p>
+      </div>
+
+      <div class="method-grid">
+        <!-- Card 1: Ensemble Learning -->
+        <div class="method-card fade-in">
+          <div class="method-icon ensemble">🤖</div>
+          <h3>Ensemble Learning</h3>
+          <p>
+            Menggabungkan tiga model klasifikasi — <strong>Decision Tree</strong>, 
+            <strong>Random Forest</strong>, dan <strong>AdaBoost</strong> — 
+            dalam VotingClassifier (soft voting) untuk prediksi tingkat stres yang lebih akurat.
+          </p>
+          <span class="method-tag">DT + RF + AdaBoost</span>
+        </div>
+
+        <!-- Card 2: SHAP Analysis -->
+        <div class="method-card fade-in">
+          <div class="method-icon shap">📊</div>
+          <h3>SHAP Analysis</h3>
+          <p>
+            <strong>SHapley Additive exPlanations</strong> menghitung kontribusi setiap fitur 
+            terhadap hasil prediksi. Mengidentifikasi faktor penyebab dominan yang meningkatkan 
+            stres dan faktor pelindung yang menurunkannya.
+          </p>
+          <span class="method-tag">Explainable AI</span>
+        </div>
+
+        <!-- Card 3: Rule Based Reasoning -->
+        <div class="method-card fade-in">
+          <div class="method-icon rule">📋</div>
+          <h3>Rule Based Reasoning</h3>
+          <p>
+            Forward Chaining yang mencocokkan penyebab dominan stres dengan 
+            basis pengetahuan dari <strong>jurnal-jurnal terpercaya</strong> 
+            untuk memberikan saran personal yang spesifik dan terukur.
+          </p>
+          <span class="method-tag">Forward Chaining</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ KUESIONER ═══ -->
+  <section class="section" id="kuesioner">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Kuesioner</span>
+        <h2 class="section-title">Isi Data Kamu</h2>
+        <p class="section-desc">
+          Jawab 20 pertanyaan di bawah ini untuk mendapatkan prediksi tingkat stres, 
+          analisis penyebab, dan saran personal.
+        </p>
+      </div>
+
+      <div class="questionnaire-container">
+        <form id="stress-form">
+
+          <!-- ── Grup 1: Psikologis ── -->
+          <div class="question-group">
+            <div class="group-header">
+              <div class="group-icon psikologis">🧠</div>
+              <h3>Psikologis</h3>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="anxiety_level">Seberapa sering kamu merasa cemas?</label>
+              <p class="question-hint">0 = tidak pernah, 10 = sangat sering</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="anxiety_level" name="anxiety_level" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-anxiety_level">5</div>
+              </div>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="self_esteem">Seberapa tinggi kepercayaan dirimu?</label>
+              <p class="question-hint">0 = sangat rendah, 10 = sangat tinggi</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="self_esteem" name="self_esteem" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-self_esteem">5</div>
+              </div>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label">Apakah kamu pernah didiagnosis gangguan mental?</label>
+              <p class="question-hint">Pilih salah satu</p>
+              <div class="toggle-container">
+                <button type="button" class="toggle-btn active" data-field="mental_health_history" data-value="0">
+                  Tidak Pernah
+                </button>
+                <button type="button" class="toggle-btn" data-field="mental_health_history" data-value="1">
+                  Pernah
+                </button>
+              </div>
+              <input type="hidden" id="mental_health_history" name="mental_health_history" value="0">
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="depression">Seberapa sering kamu merasa sedih atau putus asa?</label>
+              <p class="question-hint">0 = tidak pernah, 10 = sangat sering</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="depression" name="depression" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-depression">5</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Grup 2: Fisik & Kesehatan ── -->
+          <div class="question-group">
+            <div class="group-header">
+              <div class="group-icon fisik">🏥</div>
+              <h3>Fisik & Kesehatan</h3>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="headache">Seberapa sering kamu mengalami sakit kepala?</label>
+              <p class="question-hint">0 = tidak pernah, 10 = sangat sering</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="headache" name="headache" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-headache">5</div>
+              </div>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="blood_pressure">Bagaimana kondisi tekanan darahmu?</label>
+              <p class="question-hint">0 = normal, 10 = sangat tinggi</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="blood_pressure" name="blood_pressure" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-blood_pressure">5</div>
+              </div>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="sleep_quality">Bagaimana kualitas tidurmu?</label>
+              <p class="question-hint">0 = sangat buruk, 10 = sangat baik</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="sleep_quality" name="sleep_quality" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-sleep_quality">5</div>
+              </div>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="breathing_problem">Seberapa sering kamu mengalami masalah pernapasan?</label>
+              <p class="question-hint">0 = tidak pernah, 10 = sangat sering</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="breathing_problem" name="breathing_problem" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-breathing_problem">5</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Grup 3: Lingkungan ── -->
+          <div class="question-group">
+            <div class="group-header">
+              <div class="group-icon lingkungan">🏠</div>
+              <h3>Lingkungan</h3>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="noise_level">Seberapa bising lingkungan sekitarmu?</label>
+              <p class="question-hint">0 = sangat sepi, 10 = sangat bising</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="noise_level" name="noise_level" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-noise_level">5</div>
+              </div>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="living_conditions">Bagaimana kondisi tempat tinggalmu?</label>
+              <p class="question-hint">0 = sangat buruk, 10 = sangat baik</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="living_conditions" name="living_conditions" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-living_conditions">5</div>
+              </div>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="safety">Seberapa aman kamu merasa di lingkunganmu?</label>
+              <p class="question-hint">0 = tidak aman, 10 = sangat aman</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="safety" name="safety" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-safety">5</div>
+              </div>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="basic_needs">Apakah kebutuhan pokokmu terpenuhi?</label>
+              <p class="question-hint">0 = tidak terpenuhi, 10 = sangat terpenuhi</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="basic_needs" name="basic_needs" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-basic_needs">5</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Grup 4: Akademik & Sosial ── -->
+          <div class="question-group">
+            <div class="group-header">
+              <div class="group-icon akademik">📚</div>
+              <h3>Akademik & Sosial</h3>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="academic_performance">Bagaimana performa akademikmu saat ini?</label>
+              <p class="question-hint">0 = sangat buruk, 10 = sangat baik</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="academic_performance" name="academic_performance" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-academic_performance">5</div>
+              </div>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="study_load">Seberapa berat beban belajarmu?</label>
+              <p class="question-hint">0 = sangat ringan, 10 = sangat berat</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="study_load" name="study_load" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-study_load">5</div>
+              </div>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="teacher_student_relationship">Bagaimana hubunganmu dengan guru/dosen?</label>
+              <p class="question-hint">0 = sangat buruk, 10 = sangat baik</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="teacher_student_relationship" name="teacher_student_relationship" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-teacher_student_relationship">5</div>
+              </div>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="future_career_concerns">Seberapa khawatir kamu tentang karier masa depanmu?</label>
+              <p class="question-hint">0 = tidak khawatir, 10 = sangat khawatir</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="future_career_concerns" name="future_career_concerns" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-future_career_concerns">5</div>
+              </div>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="social_support">Seberapa besar dukungan sosial yang kamu terima?</label>
+              <p class="question-hint">0 = tidak ada, 10 = sangat besar</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="social_support" name="social_support" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-social_support">5</div>
+              </div>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="peer_pressure">Seberapa besar tekanan dari teman sebaya?</label>
+              <p class="question-hint">0 = tidak ada, 10 = sangat besar</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="peer_pressure" name="peer_pressure" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-peer_pressure">5</div>
+              </div>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="extracurricular_activities">Seberapa aktif kamu mengikuti kegiatan ekstrakurikuler?</label>
+              <p class="question-hint">0 = tidak aktif, 10 = sangat aktif</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="extracurricular_activities" name="extracurricular_activities" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-extracurricular_activities">5</div>
+              </div>
+            </div>
+
+            <div class="question-item">
+              <label class="question-label" for="bullying">Seberapa sering kamu mengalami perundungan?</label>
+              <p class="question-hint">0 = tidak pernah, 10 = sangat sering</p>
+              <div class="slider-container">
+                <span class="slider-min-label">0</span>
+                <input type="range" id="bullying" name="bullying" min="0" max="10" value="5">
+                <span class="slider-max-label">10</span>
+                <div class="slider-value" id="val-bullying">5</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div class="submit-area">
+            <button type="submit" class="btn btn-primary btn-submit" id="btn-submit">
+              🔍 Analisis Tingkat Stres
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ LOADING ═══ -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">
+      <strong>Menganalisis data kamu...</strong>
+      Menjalankan Ensemble Learning, SHAP Analysis, dan Rule Based Reasoning.<br>
+      Proses ini membutuhkan waktu 10–30 detik.
+    </div>
+  </div>
+
+  <!-- ═══ HASIL ═══ -->
+  <section class="section" id="hasil">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Hasil Analisis</span>
+        <h2 class="section-title">Hasil Prediksi & Saran</h2>
+        <p class="section-desc">
+          Berikut hasil analisis berdasarkan data yang kamu masukkan.
+        </p>
+      </div>
+
+      <div class="result-grid">
+        <!-- Stress Level Card -->
+        <div class="stress-card" id="stress-card">
+          <div class="stress-icon" id="stress-icon">😊</div>
+          <div class="stress-label">Tingkat Stres</div>
+          <div class="stress-level" id="stress-level">—</div>
+          <div class="stress-method">Diprediksi oleh Model Ensemble (DT + RF + AdaBoost)</div>
+        </div>
+
+        <!-- SHAP Chart -->
+        <div class="shap-section" id="shap-section" style="display:none;">
+          <h3>📊 Analisis SHAP — Penyebab Stres</h3>
+          <p class="shap-desc">Nilai SHAP menunjukkan kontribusi setiap fitur terhadap prediksi. Positif = meningkatkan stres, Negatif = menurunkan stres.</p>
+          <div class="shap-chart" id="shap-chart"></div>
+          <div class="shap-legend">
+            <div class="shap-legend-item">
+              <div class="shap-legend-dot positive"></div>
+              Meningkatkan Stres
+            </div>
+            <div class="shap-legend-item">
+              <div class="shap-legend-dot negative"></div>
+              Menurunkan Stres
+            </div>
+          </div>
+        </div>
+
+        <!-- Saran -->
+        <div class="saran-section" id="saran-section">
+          <h3>📋 Saran — Rule Based Reasoning</h3>
+          <p class="saran-desc">Saran personal berdasarkan penyebab dominan stres kamu.</p>
+          <div class="saran-list" id="saran-list"></div>
+        </div>
+
+        <!-- Apresiasi -->
+        <div class="apresiasi-section" id="apresiasi-section" style="display:none;">
+          <h3>✨ Kekuatan yang Kamu Miliki</h3>
+          <p class="apresiasi-text">Kamu memiliki faktor pelindung yang bisa membantu menghadapi stres:</p>
+          <div class="apresiasi-tags" id="apresiasi-tags"></div>
+        </div>
+
+        <!-- New Analysis -->
+        <div class="new-analysis-area">
+          <button class="btn btn-secondary" id="btn-new-analysis" type="button">
+            🔄 Analisis Baru
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="footer">
+    <p>Prediksi Tingkat Stres & Analisis Penyebab Stres — Ensemble Learning & Rule Based Reasoning</p>
+  </footer>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>

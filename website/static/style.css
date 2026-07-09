@@ -117,15 +117,11 @@ body {
   font-size: 1.1rem;
 }
 
-.navbar-logo .logo-icon {
+.navbar-logo .logo-img {
   width: 36px;
   height: 36px;
-  background: var(--gradient-accent);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
 .navbar-links {

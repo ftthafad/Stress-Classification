@@ -91,14 +91,170 @@ NAMA_INDO = {
 }
 
 
+# =========================================================================
+# BASIS ATURAN (RULE BASE) UNTUK FORWARD CHAINING
+# =========================================================================
+# Setiap aturan berbentuk IF (kondisi atas working memory) THEN (fakta baru
+# ditambahkan ke working memory). Mesin inferensi mencocokkan aturan secara
+# berulang (iteratif) terhadap working memory yang terus bertambah, sehingga
+# kesimpulan dari satu aturan bisa memicu aturan lain (chaining) -- bukan
+# sekadar pemetaan langsung 1 fitur -> 1 saran.
+
+def _punya_penyebab(fitur):
+    """Kondisi: True jika fakta ('penyebab', fitur) ada di working memory."""
+    return lambda wm: ('penyebab', fitur) in wm
+
+
+def _punya_pelindung(fitur):
+    return lambda wm: ('pelindung', fitur) in wm
+
+
+def _ada_kesimpulan(label):
+    return lambda wm: ('kesimpulan', label) in wm
+
+
+def _buat_aksi_saran(fitur):
+    def aksi(wm):
+        return {('saran', fitur)}
+    return aksi
+
+
+def _buat_aksi_apresiasi(fitur):
+    def aksi(wm):
+        return {('apresiasi', fitur)}
+    return aksi
+
+
+# LAYER 1: tiap fitur penyebab men-trigger fakta 'saran' untuk fitur itu,
+# dan tiap fitur pelindung men-trigger fakta 'apresiasi'. Ini jadi pijakan
+# bagi aturan lapis berikutnya (chaining).
+RULES = []
+
+for _fitur in SARAN_PENYEBAB:
+    RULES.append({
+        'nama': f'R_SARAN_{_fitur}',
+        'if': _punya_penyebab(_fitur),
+        'then': _buat_aksi_saran(_fitur),
+    })
+
+for _fitur in APRESIASI_PELINDUNG:
+    RULES.append({
+        'nama': f'R_APRESIASI_{_fitur}',
+        'if': _punya_pelindung(_fitur),
+        'then': _buat_aksi_apresiasi(_fitur),
+    })
+
+
+# LAYER 2: aturan gabungan yang baru bisa "fire" setelah fakta 'saran'
+# individual sudah tersimpulkan lebih dulu (fakta hasil rule sebelumnya
+# dipakai sebagai premis rule berikutnya -> chaining bertingkat).
+# Contoh 1: kecemasan & beban belajar yang sama-sama jadi penyebab saling
+# memperkuat, sehingga disimpulkan fakta baru 'pola_akademik_cemas'.
+def _rule_pola_akademik_cemas(wm):
+    return ('saran', 'anxiety_level') in wm and ('saran', 'study_load') in wm
+
+def _aksi_pola_akademik_cemas(wm):
+    return {('kesimpulan', 'pola_akademik_cemas')}
+
+RULES.append({
+    'nama': 'R_KESIMPULAN_pola_akademik_cemas',
+    'if': _rule_pola_akademik_cemas,
+    'then': _aksi_pola_akademik_cemas,
+})
+
+def _aksi_saran_pola_akademik_cemas(wm):
+    return {('saran_tambahan', 'pola_akademik_cemas')}
+
+RULES.append({
+    'nama': 'R_SARAN_TAMBAHAN_pola_akademik_cemas',
+    'if': _ada_kesimpulan('pola_akademik_cemas'),
+    'then': _aksi_saran_pola_akademik_cemas,
+})
+
+# Contoh 2: dua atau lebih keluhan fisik (headache/blood_pressure/breathing)
+# muncul bersamaan -> disimpulkan sebagai indikasi psikosomatis, memicu
+# fakta baru dan saran tambahan yang tidak ada di basis pengetahuan dasar.
+def _rule_psikosomatis(wm):
+    gejala = [('saran', f) for f in ('headache', 'blood_pressure', 'breathing_problem')]
+    return sum(1 for g in gejala if g in wm) >= 2
+
+def _aksi_psikosomatis(wm):
+    return {('kesimpulan', 'indikasi_psikosomatis')}
+
+RULES.append({
+    'nama': 'R_KESIMPULAN_psikosomatis',
+    'if': _rule_psikosomatis,
+    'then': _aksi_psikosomatis,
+})
+
+def _aksi_saran_psikosomatis(wm):
+    return {('saran_tambahan', 'indikasi_psikosomatis')}
+
+RULES.append({
+    'nama': 'R_SARAN_TAMBAHAN_psikosomatis',
+    'if': _ada_kesimpulan('indikasi_psikosomatis'),
+    'then': _aksi_saran_psikosomatis,
+})
+
+# Teks saran tambahan yang dipicu oleh fakta hasil chaining (bukan lookup
+# langsung dari fitur mentah, melainkan dari KESIMPULAN antara).
+SARAN_TAMBAHAN = {
+    'pola_akademik_cemas': (
+        "Kombinasi kecemasan dan beban belajar yang tinggi saling memperberat satu sama lain. "
+        "Pertimbangkan konsultasi dengan konselor akademik untuk menyusun strategi belajar sekaligus "
+        "teknik manajemen kecemasan secara bersamaan, bukan ditangani terpisah."
+    ),
+    'indikasi_psikosomatis': (
+        "Munculnya beberapa keluhan fisik sekaligus (sakit kepala, tekanan darah, dan/atau pernapasan) "
+        "bisa jadi merupakan manifestasi psikosomatis dari stres. Selain penanganan medis untuk tiap "
+        "gejala, disarankan pemeriksaan menyeluruh yang mengaitkan kondisi fisik dengan kondisi mental."
+    ),
+}
+
+
+def _forward_chaining(working_memory, rules):
+    """
+    Mesin inferensi Forward Chaining generik.
+
+    Bekerja secara iteratif: pada tiap putaran, semua aturan dicocokkan
+    terhadap working memory saat ini. Fakta baru dari aturan yang "fire"
+    dikumpulkan lalu ditambahkan ke working memory di akhir putaran.
+    Proses berulang selama masih ada fakta baru yang dihasilkan, sehingga
+    fakta hasil satu aturan bisa memicu aturan lain (chaining berlapis),
+    dan berhenti otomatis saat mencapai fixpoint (tidak ada lagi aturan
+    baru yang bisa fire).
+    """
+    wm = set(working_memory)
+    fired_log = []
+
+    while True:
+        fakta_baru = set()
+        for rule in rules:
+            if rule['if'](wm):
+                hasil_aksi = rule['then'](wm)
+                tambahan = hasil_aksi - wm
+                if tambahan:
+                    fakta_baru |= tambahan
+                    fired_log.append(rule['nama'])
+
+        if not fakta_baru:
+            break  # fixpoint tercapai, hentikan iterasi
+        wm |= fakta_baru
+
+    return wm, fired_log
+
+
 def beri_saran(tingkat_stres, daftar_penyebab, daftar_pelindung):
     """
-    Rule Based Reasoning (Forward Chaining):
-    1. Cek tingkat stres sebagai fakta awal
-    2. Jika Tidak Stres -> beri apresiasi, tidak perlu saran perbaikan
-    3. Jika Stres Ringan/Berat -> cocokkan tiap penyebab dominan dengan
-       basis pengetahuan SARAN_PENYEBAB, lalu tambahkan apresiasi
-       untuk faktor pelindung yang dimiliki
+    Rule Based Reasoning dengan Forward Chaining sesungguhnya:
+    1. Fakta awal (tingkat stres, penyebab dominan, faktor pelindung)
+       dimasukkan ke working memory.
+    2. Mesin inferensi mencocokkan basis aturan (RULES) secara iteratif
+       terhadap working memory. Fakta baru hasil satu aturan (mis. fakta
+       'saran' per fitur) dapat menjadi premis bagi aturan lapis
+       berikutnya (mis. 'kesimpulan' pola gabungan), sampai tidak ada lagi
+       aturan yang bisa dipicu (fixpoint) -> inilah proses chaining.
+    3. Working memory akhir dibaca untuk menyusun output saran & apresiasi.
     """
     hasil = {
         'tingkat_stres': tingkat_stres,
@@ -106,24 +262,42 @@ def beri_saran(tingkat_stres, daftar_penyebab, daftar_pelindung):
         'apresiasi': []
     }
 
-    # RULE 1: Tidak Stres
+    # RULE 1: Tidak Stres -> tidak perlu inferensi lebih lanjut
     if tingkat_stres == 'Tidak Stres':
         hasil['saran_utama'].append(
             "Kondisimu saat ini sangat baik. Pertahankan pola hidup sehatmu!"
         )
         return hasil
 
-    # RULE 2: Stres Ringan atau Stres Berat
-    # Cocokkan tiap fitur penyebab dengan basis pengetahuan
+    # Fakta awal (initial facts) untuk working memory
+    working_memory = set()
+    working_memory.add(('tingkat_stres', tingkat_stres))
     for fitur in daftar_penyebab:
-        if fitur in SARAN_PENYEBAB:
+        working_memory.add(('penyebab', fitur))
+    for fitur in daftar_pelindung:
+        working_memory.add(('pelindung', fitur))
+
+    # Jalankan mesin inferensi forward chaining sampai fixpoint
+    wm_akhir, _fired_log = _forward_chaining(working_memory, RULES)
+
+    # Susun saran utama berdasarkan urutan penyebab dominan (agar urutan
+    # tampilan tetap mengikuti prioritas SHAP), diambil dari fakta 'saran'
+    # yang benar-benar berhasil disimpulkan mesin inferensi.
+    for fitur in daftar_penyebab:
+        if ('saran', fitur) in wm_akhir:
             nama = NAMA_INDO.get(fitur, fitur)
             saran = SARAN_PENYEBAB[fitur]
             hasil['saran_utama'].append(f"[{nama}] {saran}")
 
-    # RULE 3: Tambahkan apresiasi untuk faktor pelindung
+    # Tambahkan saran hasil chaining lapis kedua (kesimpulan gabungan),
+    # yang hanya muncul jika kombinasi fakta tertentu terpenuhi.
+    for label, teks in SARAN_TAMBAHAN.items():
+        if ('saran_tambahan', label) in wm_akhir:
+            hasil['saran_utama'].append(f"[Pola Gabungan] {teks}")
+
+    # Apresiasi untuk faktor pelindung, dari fakta yang disimpulkan mesin
     for fitur in daftar_pelindung:
-        if fitur in APRESIASI_PELINDUNG:
+        if ('apresiasi', fitur) in wm_akhir:
             hasil['apresiasi'].append(APRESIASI_PELINDUNG[fitur])
 
     return hasil
